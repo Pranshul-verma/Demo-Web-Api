@@ -1,4 +1,5 @@
 ﻿using DummyApi.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DummyApi.Controllers
@@ -18,31 +19,33 @@ namespace DummyApi.Controllers
                 };
             }
         }
-
-            [HttpGet(Name = "GetEmployeeDetail")]
-            public IActionResult Get()
+        
+        [ActionName("GetEmployeeDetail")]
+        [HttpGet(Name = "GetEmployeeDetail")]
+        public IActionResult Get()
+        {
+            if (EmployeeDetailsList?.Count == 0)
             {
-                if (EmployeeDetailsList?.Count == 0)
-                {
-                    return NotFound("No data found.");
-                }
-
-                // Return all data in the collection
-                return Ok(EmployeeDetailsList);
+                return NotFound("No data found.");
             }
 
-            [HttpPost(Name = "SetEmployeeDetail")]
-            public IActionResult SetEmployeeDetail([FromBody] EmployeeDetail empDtl)
+            // Return all data in the collection
+            return Ok(EmployeeDetailsList);
+        }
+
+        [ActionName("SetEmployeeDetail")]
+        [HttpPost(Name = "SetEmployeeDetail")]
+        public IActionResult SetEmployeeDetail([FromBody] EmployeeDetail empDtl)
+        {
+
+            if (empDtl == null)
             {
-
-                if (empDtl == null)
-                {
-                    return BadRequest("Data cannot be empty.");
-                }
-
-                // Add new data to the collection
-                EmployeeDetailsList?.Add(empDtl);
-                return Ok(EmployeeDetailsList);
+                return BadRequest("Data cannot be empty.");
             }
+
+            // Add new data to the collection
+            EmployeeDetailsList?.Add(empDtl);
+            return Ok(EmployeeDetailsList);
         }
     }
+}
